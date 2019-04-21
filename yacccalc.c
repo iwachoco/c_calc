@@ -28,26 +28,31 @@ static void unget_token(Token *token) {
 }
 
 static double parse_primary_expression() {
+  int minus_flag = 0;
   Token token;
+  double value;
   my_get_token(&token);
+  if(token.kind == SUB_OPERATOR_TOKEN) {
+    minus_flag = 1;
+    my_get_token(&token);
+  }
   if(token.kind == NUMBER_TOKEN) {
-    return token.value;
+    value = token.value;
   } else if(token.kind == LEFT_BRACKET_TOKEN) {
-    double value;
     value = parse_expression();
     my_get_token(&token);
-    if(token.kind == RIGHT_BRACKET_TOKEN) {
-      return value;
-    } else {
+    if(token.kind != RIGHT_BRACKET_TOKEN) {
       fprintf(stderr, "cannot find brackets.\n");
       exit(1);
-      return 0.0;
     }
   } else {
-    unget_token(&token);
     exit(1);
     return 0.0;
   }
+  if(minus_flag) {
+    value = -1.0 * value;
+  }
+  return value;
 }
 
 static double parse_term() {
