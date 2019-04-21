@@ -7,6 +7,12 @@
 static int st_look_ahead_token_exists;
 static Token st_look_ahead_token;
 
+static void my_get_token(Token *);
+static void unget_token(Token *);
+static double parse_primary_expression();
+static double parse_term();
+static double parse_expression();
+
 static void my_get_token(Token *token) {
   if(st_look_ahead_token_exists) {
     *token = st_look_ahead_token;
@@ -26,8 +32,19 @@ static double parse_primary_expression() {
   my_get_token(&token);
   if(token.kind == NUMBER_TOKEN) {
     return token.value;
+  } else if(token.kind == LEFT_BRACKET_TOKEN) {
+    double value;
+    value = parse_expression();
+    my_get_token(&token);
+    if(token.kind == RIGHT_BRACKET_TOKEN) {
+      return value;
+    } else {
+      fprintf(stderr, "cannot find brackets.\n");
+      exit(1);
+      return 0.0;
+    }
   } else {
-    fprintf(stderr, "syntax error or finished.\n");
+    unget_token(&token);
     exit(1);
     return 0.0;
   }

@@ -48,7 +48,13 @@ void get_token(Token *token) {
     out_pos++;
     token->str[out_pos] = '\0';
 
-    if(current_char == '+') {
+    if(current_char == '(') {
+      token->kind = LEFT_BRACKET_TOKEN;
+      return;
+    } else if(current_char == ')') {
+      token->kind = RIGHT_BRACKET_TOKEN;
+      return;
+    } else if(current_char == '+') {
       token->kind = ADD_OPERATOR_TOKEN;
       return;
     } else if(current_char == '-') {
