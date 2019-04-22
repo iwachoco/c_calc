@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "token.h"
 
 #define LINE_BUF_SIZE 1024
@@ -28,7 +29,7 @@ static void unget_token(Token *token) {
 }
 
 static double parse_primary_expression() {
-  int minus_flag = 0;
+  int minus_flag = 0, function_flag = 0;
   Token token;
   double value;
   my_get_token(&token);
@@ -36,7 +37,58 @@ static double parse_primary_expression() {
     minus_flag = 1;
     my_get_token(&token);
   }
-  if(token.kind == NUMBER_TOKEN) {
+  if(token.kind == LOG_FUNCTION_TOKEN) {
+    function_flag = 1;
+    my_get_token(&token);
+  } else if(token.kind == SIN_FUNCTION_TOKEN) {
+    function_flag = 2;
+    my_get_token(&token);
+  } else if(token.kind == COS_FUNCTION_TOKEN) {
+    function_flag = 3;
+    my_get_token(&token);
+  } else if(token.kind == TAN_FUNCTION_TOKEN) {
+    function_flag = 4;
+    my_get_token(&token);
+  } else if(token.kind == EXP_FUNCTION_TOKEN) {
+    function_flag = 5;
+    my_get_token(&token);
+  } else if(token.kind == SQRT_FUNCTION_TOKEN) {
+    function_flag = 6;
+    my_get_token(&token);
+  }
+  if(function_flag != 0) {
+    if(token.kind == LEFT_BRACKET_TOKEN) {
+      value = parse_expression();
+      my_get_token(&token);
+      if(token.kind != RIGHT_BRACKET_TOKEN) {
+        fprintf(stderr, "cannot find brackets.\n");
+        exit(1);
+      }
+      switch(function_flag) {
+        case 1:
+          value = log(value);
+          break;
+        case 2:
+          value = sin(value);
+          break;
+        case 3:
+          value = cos(value);
+          break;
+        case 4:
+          value = tan(value);
+          break;
+        case 5:
+          value = exp(value);
+          break;
+        case 6:
+          value = sqrt(value);
+          break;
+      }
+    } else {
+      exit(1);
+      return 0.0;
+    }
+  } else if(token.kind == NUMBER_TOKEN) {
     value = token.value;
   } else if(token.kind == LEFT_BRACKET_TOKEN) {
     value = parse_expression();

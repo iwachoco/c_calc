@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "token.h"
 
 static char *st_line;
 static int st_line_pos;
+static int st_func_flag;
 
 typedef enum {
   INITIAL,
@@ -66,6 +68,34 @@ void get_token(Token *token) {
     } else if(current_char == '/') {
       token->kind = DIV_OPERATOR_TOKEN;
       return;
+    } else if(('a' <= current_char && current_char <= 'z') || ('A' <= current_char && current_char <= 'Z')) {
+      st_func_flag++;
+      if(strcmp(token->str, "log") == 0 || strcmp(token->str, "LOG") == 0) {
+        token->kind = LOG_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "sin") == 0 || strcmp(token->str, "SIN") == 0) {
+        token->kind = SIN_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "cos") == 0 || strcmp(token->str, "COS") == 0) {
+        token->kind = COS_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "tan") == 0 || strcmp(token->str, "TAN") == 0) {
+        token->kind = TAN_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "exp") == 0 || strcmp(token->str, "EXP") == 0) {
+        token->kind = EXP_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "sqrt") == 0 || strcmp(token->str, "SQRT") == 0) {
+        token->kind = SQRT_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      }
+      continue;
     } else if(isdigit(current_char)) {
       if(status == INITIAL) {
         status = INTEGER_PART;
@@ -81,6 +111,10 @@ void get_token(Token *token) {
       }
     } else {
       fprintf(stderr, "bad character: %c\n", current_char);
+      exit(1);
+    }
+    if(st_func_flag != 0) {
+      fprintf(stderr, "syntax error.\n");
       exit(1);
     }
   }
