@@ -74,6 +74,10 @@ void get_token(Token *token) {
         token->kind = LOG_FUNCTION_TOKEN;
         st_func_flag = 0;
         return;
+      } else if(strcmp(token->str, "ln") == 0 || strcmp(token->str, "LN") == 0) {
+        token->kind = LOG_NATURAL_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
       } else if(strcmp(token->str, "sin") == 0 || strcmp(token->str, "SIN") == 0) {
         token->kind = SIN_FUNCTION_TOKEN;
         st_func_flag = 0;
@@ -84,6 +88,18 @@ void get_token(Token *token) {
         return;
       } else if(strcmp(token->str, "tan") == 0 || strcmp(token->str, "TAN") == 0) {
         token->kind = TAN_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "arcsin") == 0 || strcmp(token->str, "ARCSIN") == 0) {
+        token->kind = ARC_SIN_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "arccos") == 0 || strcmp(token->str, "ARCCOS") == 0) {
+        token->kind = ARC_COS_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "arctan") == 0 || strcmp(token->str, "ARCTAN") == 0) {
+        token->kind = ARC_TAN_FUNCTION_TOKEN;
         st_func_flag = 0;
         return;
       } else if(strcmp(token->str, "exp") == 0 || strcmp(token->str, "EXP") == 0) {

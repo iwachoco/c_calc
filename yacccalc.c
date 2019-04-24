@@ -32,12 +32,13 @@ static double parse_primary_expression() {
   int minus_flag = 0, function_flag = 0;
   Token token;
   double value;
+  double base;
   my_get_token(&token);
   if(token.kind == SUB_OPERATOR_TOKEN) {
     minus_flag = 1;
     my_get_token(&token);
   }
-  if(token.kind == LOG_FUNCTION_TOKEN) {
+  if(token.kind == LOG_NATURAL_FUNCTION_TOKEN) {
     function_flag = 1;
     my_get_token(&token);
   } else if(token.kind == SIN_FUNCTION_TOKEN) {
@@ -55,6 +56,24 @@ static double parse_primary_expression() {
   } else if(token.kind == SQRT_FUNCTION_TOKEN) {
     function_flag = 6;
     my_get_token(&token);
+  } else if(token.kind == ARC_SIN_FUNCTION_TOKEN) {
+    function_flag = 7;
+    my_get_token(&token);
+  } else if(token.kind == ARC_COS_FUNCTION_TOKEN) {
+    function_flag = 8;
+    my_get_token(&token);
+  } else if(token.kind == ARC_TAN_FUNCTION_TOKEN) {
+    function_flag = 9;
+    my_get_token(&token);
+  } else if(token.kind == LOG_FUNCTION_TOKEN) {
+    function_flag = 10;
+    my_get_token(&token);
+    if(token.kind == NUMBER_TOKEN) {
+      base = token.value;
+      my_get_token(&token);
+    } else if(token.kind == LEFT_BRACKET_TOKEN) {
+      base = 10;
+    }
   }
   if(function_flag != 0) {
     if(token.kind == LEFT_BRACKET_TOKEN) {
@@ -83,6 +102,17 @@ static double parse_primary_expression() {
         case 6:
           value = sqrt(value);
           break;
+        case 7:
+          value = asin(value);
+          break;
+        case 8:
+          value = acos(value);
+          break;
+        case 9:
+          value = atan(value);
+          break;
+        case 10:
+          value = log(value) / log(base);
       }
     } else {
       exit(1);
