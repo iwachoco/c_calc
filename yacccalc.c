@@ -8,11 +8,22 @@
 static int st_look_ahead_token_exists;
 static Token st_look_ahead_token;
 
+static int factorial_calc(int);
 static void my_get_token(Token *);
 static void unget_token(Token *);
 static double parse_primary_expression();
+static double parse_pow_term();
 static double parse_term();
 static double parse_expression();
+
+
+static int factorial_calc(int number) {
+  if(number == 1 || number == 0) {
+    return 1;
+  } else {
+    return number * factorial_calc(number - 1);
+  }
+}
 
 static void my_get_token(Token *token) {
   if(st_look_ahead_token_exists) {
@@ -137,21 +148,51 @@ static double parse_primary_expression() {
   return value;
 }
 
+static double parse_factorial_term() {
+  double r1;
+  Token token;
+  r1 = parse_primary_expression();
+  my_get_token(&token);
+  if(token.kind == FACTORIAL_FUNCTION_TOKEN) {
+    r1 = factorial_calc(r1);
+  } else {
+    unget_token(&token);
+  }
+  return r1;
+}
+
+static double parse_pow_term() {
+  double r1, r2;
+  Token token;
+  r1 = parse_factorial_term();
+  my_get_token(&token);
+  if(token.kind == POWER_FUNCTION_TOKEN) {
+    r2 = parse_factorial_term();
+    r1 = pow(r1, r2);
+  } else {
+    unget_token(&token);
+  }
+  return r1;
+}
+
 static double parse_term() {
   double r1, r2;
   Token token;
-  r1 = parse_primary_expression();
+  r1 = parse_pow_term();
   while(1) {
     my_get_token(&token);
-    if(token.kind != MUL_OPERATOR_TOKEN && token.kind != DIV_OPERATOR_TOKEN) {
+    if(token.kind != MUL_OPERATOR_TOKEN && token.kind != DIV_OPERATOR_TOKEN && token.kind != FACTORIAL_FUNCTION_TOKEN) {
       unget_token(&token);
       break;
+    } else if(token.kind != FACTORIAL_FUNCTION_TOKEN) {
+      r2 = parse_pow_term();
     }
-    r2 = parse_primary_expression();
     if(token.kind == MUL_OPERATOR_TOKEN) {
       r1 *= r2;
     } else if(token.kind == DIV_OPERATOR_TOKEN) {
       r1 /= r2;
+    } else if(token.kind == FACTORIAL_FUNCTION_TOKEN) {
+      r1 = factorial_calc((int)r1);
     }
   }
   return r1;

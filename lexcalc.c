@@ -68,6 +68,12 @@ void get_token(Token *token) {
     } else if(current_char == '/') {
       token->kind = DIV_OPERATOR_TOKEN;
       return;
+    } else if(current_char == '^') {
+      token->kind = POWER_FUNCTION_TOKEN;
+      return;
+    } else if(current_char == '!') {
+      token->kind = FACTORIAL_FUNCTION_TOKEN;
+      return;
     } else if(('a' <= current_char && current_char <= 'z') || ('A' <= current_char && current_char <= 'Z')) {
       st_func_flag++;
       if(strcmp(token->str, "log") == 0 || strcmp(token->str, "LOG") == 0) {
