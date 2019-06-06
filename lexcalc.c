@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
@@ -114,6 +115,11 @@ void get_token(Token *token) {
         return;
       } else if(strcmp(token->str, "sqrt") == 0 || strcmp(token->str, "SQRT") == 0) {
         token->kind = SQRT_FUNCTION_TOKEN;
+        st_func_flag = 0;
+        return;
+      } else if(strcmp(token->str, "pi") == 0 || strcmp(token->str, "PI") == 0) {
+        token->kind = NUMBER_TOKEN;
+        token->value = M_PI;
         st_func_flag = 0;
         return;
       }
